@@ -29,19 +29,19 @@ Movie Watchlist is a Flutter mobile application that helps users organize movies
 
 ### Home / Movie Grid
 
-![Movie Watchlist Home](screenshots/M4.png)
+![Movie Watchlist Home](screenshots/final.png)
 
 *Figure 1: The home screen displays movies using a GridView.*
 
 ### Movie Details
 
-![Movie Details](screenshots/M5.png)
+![Movie Details](screenshots/step666.png)
 
 *Figure 2: The movie detail screen displays information received from the selected Movie object.*
 
 ### Add Movie
 
-![Add Movie](screenshots/M7.png)
+![Add Movie](screenshots/step777.png)
 
 *Figure 3: The Add Movie screen allows the user to enter and validate movie information.*
 
