@@ -3,11 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/movie_provider.dart';
 import 'movie_detail_screen.dart';
 
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  int selectedIndex = -1;
+
+  @override
+  Widget build(BuildContext context) {
     final movies = ref.watch(movieProvider);
 
     return Scaffold(
@@ -49,10 +56,14 @@ class HomeScreen extends ConsumerWidget {
               itemCount: movies.length,
               itemBuilder: (context, index) {
                 final movie = movies[index];
+                final isSelected = selectedIndex == index;
 
-                return InkWell(
-                  borderRadius: BorderRadius.circular(12),
+                return GestureDetector(
                   onTap: () {
+                    setState(() {
+                      selectedIndex = index;
+                    });
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
@@ -62,61 +73,75 @@ class HomeScreen extends ConsumerWidget {
                       ),
                     );
                   },
-                  child: Container(
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    transform: Matrix4.identity()
+                    ..scaleByDouble(isSelected ? 0.96 : 1.0, 1.0, 1.0, 1.0),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
-                      boxShadow: const [
+                      boxShadow: [
                         BoxShadow(
-                          blurRadius: 5,
-                          offset: Offset(0, 3),
+                          blurRadius: isSelected ? 10 : 5,
+                          offset: const Offset(0, 3),
                         ),
                       ],
                     ),
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(12),
                       child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                        crossAxisAlignment:
+                            CrossAxisAlignment.start,
                         children: [
                           Expanded(
-                            child: Image.network(
-                              movie.posterUrl,
-                              width: double.infinity,
-                              fit: BoxFit.cover,
-                              errorBuilder:
-                                  (context, error, stackTrace) {
-                                return const Center(
-                                  child: Icon(
-                                    Icons.broken_image,
-                                    size: 50,
-                                  ),
-                                );
-                              },
+                            child: Hero(
+                              tag: 'movie-${movie.id}',
+                              child: Image.network(
+                                movie.posterUrl,
+                                width: double.infinity,
+                                fit: BoxFit.cover,
+                                errorBuilder:
+                                    (context, error, stackTrace) {
+                                  return const Center(
+                                    child: Icon(
+                                      Icons.broken_image,
+                                      size: 50,
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ),
-                          Padding(
-                            padding: const EdgeInsets.all(8),
-                            child: Column(
-                              crossAxisAlignment:
-                                  CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  movie.title,
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 16,
+                          AnimatedOpacity(
+                            duration:
+                                const Duration(milliseconds: 300),
+                            opacity: isSelected ? 0.5 : 1.0,
+                            child: Padding(
+                              padding: const EdgeInsets.all(8),
+                              child: Column(
+                                crossAxisAlignment:
+                                    CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    movie.title,
+                                    maxLines: 1,
+                                    overflow:
+                                        TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    Text(movie.genre),
-                                    const Spacer(),
-                                    Text('${movie.year}'),
-                                  ],
-                                ),
-                              ],
+                                  const SizedBox(height: 4),
+                                  Row(
+                                    children: [
+                                      Text(movie.genre),
+                                      const Spacer(),
+                                      Text('${movie.year}'),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ],

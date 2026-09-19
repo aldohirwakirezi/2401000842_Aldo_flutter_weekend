@@ -19,27 +19,31 @@ class MovieDetailScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.network(
-              movie.posterUrl,
-              width: double.infinity,
-              height: 400,
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return const SizedBox(
-                  height: 400,
-                  child: Center(
-                    child: Icon(
-                      Icons.broken_image,
-                      size: 80,
+            Hero(
+              tag: 'movie-${movie.id}',
+              child: Image.network(
+                movie.posterUrl,
+                width: double.infinity,
+                height: 400,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return const SizedBox(
+                    height: 400,
+                    child: Center(
+                      child: Icon(
+                        Icons.broken_image,
+                        size: 80,
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
             Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment:
+                    CrossAxisAlignment.start,
                 children: [
                   Text(
                     movie.title,
@@ -51,20 +55,33 @@ class MovieDetailScreen extends StatelessWidget {
                   const SizedBox(height: 10),
                   Text(
                     '${movie.genre} • ${movie.year}',
-                    style: const TextStyle(fontSize: 18),
+                    style: const TextStyle(
+                      fontSize: 18,
+                    ),
                   ),
                   const SizedBox(height: 20),
                   Text(
                     movie.description,
-                    style: const TextStyle(fontSize: 16),
+                    style: const TextStyle(
+                      fontSize: 16,
+                    ),
                   ),
                   const SizedBox(height: 25),
                   Text(
-                    movie.isWatched ? 'Watched ✓' : 'Not watched',
+                    movie.isWatched
+                        ? 'Watched ✓'
+                        : 'Not watched',
                     style: const TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
                     ),
+                  ),
+                  const SizedBox(height: 25),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text('Back to Watchlist'),
                   ),
                 ],
               ),
