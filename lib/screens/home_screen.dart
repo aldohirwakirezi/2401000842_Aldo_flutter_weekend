@@ -2,16 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../providers/movie_provider.dart';
 import 'movie_detail_screen.dart';
+import 'add_movie_screen.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() =>
+      _HomeScreenState();
 }
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   int selectedIndex = -1;
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.microtask(() {
+      ref.read(movieProvider.notifier).loadMovies();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +32,20 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
       appBar: AppBar(
         title: const Text('My Movie Watchlist'),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) =>
+                      const AddMovieScreen(),
+                ),
+              );
+            },
+          ),
+        ],
       ),
       body: movies.isEmpty
           ? const Center(
@@ -67,17 +92,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => MovieDetailScreen(
+                        builder: (context) =>
+                            MovieDetailScreen(
                           movie: movie,
                         ),
                       ),
                     );
                   },
                   child: AnimatedContainer(
-                    duration: const Duration(milliseconds: 300),
+                    duration:
+                        const Duration(milliseconds: 300),
                     curve: Curves.easeInOut,
                     transform: Matrix4.identity()
-                    ..scaleByDouble(isSelected ? 0.96 : 1.0, 1.0, 1.0, 1.0),
+                      ..scaleByDouble(
+                        isSelected ? 0.96 : 1.0,
+                        1.0,
+                        1.0,
+                        1.0,
+                      ),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
@@ -113,11 +145,13 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                             ),
                           ),
                           AnimatedOpacity(
-                            duration:
-                                const Duration(milliseconds: 300),
+                            duration: const Duration(
+                              milliseconds: 300,
+                            ),
                             opacity: isSelected ? 0.5 : 1.0,
                             child: Padding(
-                              padding: const EdgeInsets.all(8),
+                              padding:
+                                  const EdgeInsets.all(8),
                               child: Column(
                                 crossAxisAlignment:
                                     CrossAxisAlignment.start,
@@ -128,7 +162,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                                     overflow:
                                         TextOverflow.ellipsis,
                                     style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
+                                      fontWeight:
+                                          FontWeight.bold,
                                       fontSize: 16,
                                     ),
                                   ),
